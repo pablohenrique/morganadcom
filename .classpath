@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="/Users/pablohpsilva/Documents/Github/admissionsmsu/msuadmissions/GoogleDriveLibs/google-oauth-client-java6-1.17.0-rc.jar"/>
 	<classpathentry kind="lib" path="/Users/pablohpsilva/Documents/Github/admissionsmsu/msuadmissions/GoogleDriveLibs/google-oauth-client-jetty-1.17.0-rc.jar"/>
 	<classpathentry kind="lib" path="/Users/pablohpsilva/Documents/Github/admissionsmsu/msuadmissions/GoogleDriveLibs/google-oauth-client-servlet-1.17.0-rc.jar"/>
+	<classpathentry kind="lib" path="/Users/pablohpsilva/Downloads/jxl-2.6.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
