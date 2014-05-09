@@ -16,6 +16,16 @@
     <url-pattern>/morganadcom/greet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>UploadFile</servlet-name>
+    <servlet-class>edu.morgan.server.UploadFile</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>UploadFile</servlet-name>
+    <url-pattern>/UploadFile</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Morganadcom.html</welcome-file>
