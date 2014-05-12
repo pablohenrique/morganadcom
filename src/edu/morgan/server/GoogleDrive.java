@@ -5,9 +5,11 @@
  */
 package edu.morgan.server;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -16,55 +18,44 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
+
 import edu.morgan.server.student.IncompleteStudent;
+import edu.morgan.shared.CredentialManager;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GoogleDrive {
-
-    private static final String CLIENT_ID = "892186241167-228o9c5afo7fqrnbciabv81eghdj63f5.apps.googleusercontent.com";
-    private static final String CLIENT_SECRET = "BVuUu5FU8boxFTgkSMtpJwDK";
-    private static String REDIRECT_URI = "http://localhost:8084/msuadmissions/MiddleServlet";
-    private static String CODE_VALIDATION;
-    private static String AUTHORIZATION_URI;
-
-    private HttpTransport httpTransport;
+///*
+	private static final String CLIENT_ID = "531888765455-d9dq5ldokro9ahi5pjrc56gpolidn35f.apps.googleusercontent.com";
+    private static final String CLIENT_SECRET = "NGVNLhbRJhUGUVSAJEgrikUx";
+    private static String REDIRECT_URI = "http://1-dot-morgandrivesu.appspot.com/AppServlet";
+	private HttpTransport httpTransport;
     private JsonFactory jsonFactory;
     private GoogleAuthorizationCodeFlow flow;
+//*/
     private Drive service;
-    private GoogleCredential credential;
+    private Credential credential;
 
     /*
         CONFIGURATION METHODS
     */
-    //public GoogleDrive(String redirectUri) {
-    public GoogleDrive(String codeValidation) {
-        //REDIRECT_URI = redirectUri;
-        this.httpTransport = new NetHttpTransport();
-        this.jsonFactory = new JacksonFactory();
-
-        this.flow = new GoogleAuthorizationCodeFlow.Builder(
-                this.httpTransport, this.jsonFactory, CLIENT_ID, CLIENT_SECRET, Arrays.asList(DriveScopes.DRIVE, DriveScopes.DRIVE_APPDATA, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_METADATA_READONLY))
-                .setAccessType("offline")
-                .setApprovalPrompt("force").build();
-        AUTHORIZATION_URI = this.flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI).build();
-        this.setCode(codeValidation);
-    }
-
-    public GoogleDrive() {
-        //REDIRECT_URI = redirectUri;
-        this.httpTransport = new NetHttpTransport();
-        this.jsonFactory = new JacksonFactory();
-
-        this.flow = new GoogleAuthorizationCodeFlow.Builder(
-                this.httpTransport, this.jsonFactory, CLIENT_ID, CLIENT_SECRET, Arrays.asList(DriveScopes.DRIVE, DriveScopes.DRIVE_APPDATA, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_METADATA_READONLY))
-                .setAccessType("offline")
-                .setApprovalPrompt("force").build();
-        AUTHORIZATION_URI = this.flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI).build();
-
-    }
     
+    public GoogleDrive(String code) throws IOException{
+    	this.httpTransport = new NetHttpTransport();
+        this.jsonFactory = new JacksonFactory();
+
+        this.flow = new GoogleAuthorizationCodeFlow.Builder(
+                this.httpTransport, this.jsonFactory, CLIENT_ID, CLIENT_SECRET, Arrays.asList(DriveScopes.DRIVE, DriveScopes.DRIVE_APPDATA, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_METADATA_READONLY))
+                .setAccessType("offline")
+                .setApprovalPrompt("force").build();
+        
+        GoogleTokenResponse response = this.flow.newTokenRequest(code).setRedirectUri(REDIRECT_URI).execute();
+		String accessToken = response.getAccessToken();
+        credential = new GoogleCredential().setAccessToken(accessToken);
+        this.setService(new Drive.Builder(this.httpTransport, this.jsonFactory, this.credential).setApplicationName("Admissions GoogleDrive Manager").build());
+    }
     
     /**
      * @return the service
@@ -78,30 +69,6 @@ public class GoogleDrive {
      */
     public void setService(Drive service) {
         this.service = service;
-    }
-    
-    public String GetAuthorizationLink() {
-        return AUTHORIZATION_URI;
-    }
-
-    public String GetRedirectURI() {
-        return REDIRECT_URI;
-    }
-    
-    /*
-        Public Use of this Class
-    */
-    
-    public void setCode(String code) {
-        try {
-            CODE_VALIDATION = code;
-            GoogleTokenResponse response = this.flow.newTokenRequest(CODE_VALIDATION).setRedirectUri(REDIRECT_URI).execute();
-            String accessToken = response.getAccessToken();
-            credential = new GoogleCredential().setAccessToken(accessToken);
-            this.setService(new Drive.Builder(this.httpTransport, this.jsonFactory, this.credential).setApplicationName("Admissions GoogleDrive Manager").build());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
     /*
      *

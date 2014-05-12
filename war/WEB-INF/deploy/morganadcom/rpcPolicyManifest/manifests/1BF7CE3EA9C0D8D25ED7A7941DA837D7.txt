@@ -1,0 +1,2 @@
+serviceClass: edu.morgan.client.GreetingService
+path: B7798174A038FCA4B35F09ECB4761ABE.gwt.rpc

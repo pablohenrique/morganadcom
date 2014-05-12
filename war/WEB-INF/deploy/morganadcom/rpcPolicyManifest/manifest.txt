@@ -1,0 +1,3 @@
+# Module morganadcom
+# RPC service class, partial path of RPC policy file
+edu.morgan.client.GreetingService, B7798174A038FCA4B35F09ECB4761ABE.gwt.rpc
